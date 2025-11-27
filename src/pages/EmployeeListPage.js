@@ -12,29 +12,46 @@ function EmployeeListPage() {
     const [department, setDepartment] = useState("");
     const [position, setPosition] = useState("");
 
-    // ADD EMPLOYEE MODAL
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    // ADD EMPLOYEE MODAL (your existing stuff)
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [newEmployee, setNewEmployee] = useState({
         first_name: "",
         last_name: "",
         email: "",
         department: "",
         position: "",
-        salary: "",      // 👈 backend expects salary too
+        salary: "",
     });
 
-    // Fetch Employees ==============================
+    // EDIT EMPLOYEE MODAL (already implemented)
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editEmployee, setEditEmployee] = useState({
+        _id: "",
+        first_name: "",
+        last_name: "",
+        email: "",
+        department: "",
+        position: "",
+        salary: "",
+    });
+
+    // 🔹 PROFILE MODAL (NEW)
+    const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+    const [profileEmployee, setProfileEmployee] = useState(null);
+    const [profileFile, setProfileFile] = useState(null);
+
+    // FETCH employees
     const { data: employees = [], isLoading } = useQuery({
         queryKey: ["employees", department, position],
         queryFn: () => employeeApi.getEmployees({ department, position }),
     });
 
-    // Create Employee ==============================
+    // CREATE, UPDATE, DELETE mutations (reuse your existing ones)
     const addEmployeeMutation = useMutation({
         mutationFn: employeeApi.createEmployee,
         onSuccess: () => {
             queryClient.invalidateQueries(["employees"]);
-            setIsModalOpen(false);
+            setIsAddModalOpen(false);
             setNewEmployee({
                 first_name: "",
                 last_name: "",
@@ -45,35 +62,82 @@ function EmployeeListPage() {
             });
             alert("Employee added successfully");
         },
-        onError: (err) => {
-            console.log("ADD EMPLOYEE ERROR:", err.response?.status, err.response?.data);
-            alert("Failed to add employee. Check console for details.");
+    });
+
+    const updateEmployeeMutation = useMutation({
+        mutationFn: ({ id, data }) => employeeApi.updateEmployee(id, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries(["employees"]);
+            setIsEditModalOpen(false);
+            alert("Employee updated successfully");
         },
     });
 
-    // Delete Employee ==============================
     const deleteMutation = useMutation({
         mutationFn: employeeApi.deleteEmployee,
         onSuccess: () => {
             queryClient.invalidateQueries(["employees"]);
             alert("Employee deleted");
         },
-        onError: (err) => {
-            console.log("DELETE EMPLOYEE ERROR:", err.response?.status, err.response?.data);
-            alert("Failed to delete employee. Check console for details.");
-        },
     });
 
     const handleAddSubmit = (e) => {
         e.preventDefault();
-
-        // ensure salary is a number
-        const payload = {
-            ...newEmployee,
-            salary: Number(newEmployee.salary),
-        };
-
+        const payload = { ...newEmployee, salary: Number(newEmployee.salary) };
         addEmployeeMutation.mutate(payload);
+    };
+
+    // open edit modal
+    const handleOpenEdit = (emp) => {
+        setEditEmployee({
+            _id: emp._id,
+            first_name: emp.first_name,
+            last_name: emp.last_name,
+            email: emp.email,
+            department: emp.department,
+            position: emp.position,
+            salary: emp.salary,
+        });
+        setIsEditModalOpen(true);
+    };
+
+    const handleEditSubmit = (e) => {
+        e.preventDefault();
+        const { _id, ...data } = editEmployee;
+        const payload = { ...data, salary: Number(data.salary) };
+        updateEmployeeMutation.mutate({ id: _id, data: payload });
+    };
+
+    // 🔹 open profile modal (NEW)
+    const handleOpenProfile = (emp) => {
+        setProfileEmployee(emp);
+        setProfileFile(null);
+        setIsProfileModalOpen(true);
+    };
+
+    // 🔹 submit profile picture + details (NEW)
+    const handleProfileSubmit = (e) => {
+        e.preventDefault();
+        if (!profileEmployee) return;
+
+        const formData = new FormData();
+        formData.append("first_name", profileEmployee.first_name);
+        formData.append("last_name", profileEmployee.last_name);
+        formData.append("email", profileEmployee.email);
+        formData.append("department", profileEmployee.department);
+        formData.append("position", profileEmployee.position);
+        formData.append("salary", profileEmployee.salary);
+
+        if (profileFile) {
+            formData.append("profilePicture", profileFile);
+        }
+
+        updateEmployeeMutation.mutate({
+            id: profileEmployee._id,
+            data: formData,
+        });
+
+        setIsProfileModalOpen(false);
     };
 
     if (isLoading) return <h2>Loading employees...</h2>;
@@ -100,7 +164,7 @@ function EmployeeListPage() {
             </div>
 
             {/* ADD EMPLOYEE BUTTON */}
-            <button onClick={() => setIsModalOpen(true)}>+ Add Employee</button>
+            <button onClick={() => setIsAddModalOpen(true)}>+ Add Employee</button>
 
             {/* EMPLOYEE TABLE */}
             <table
@@ -128,9 +192,27 @@ function EmployeeListPage() {
                             <td>{emp.position}</td>
                             <td>{emp.salary}</td>
                             <td>
+                                {/* NEW: View button */}
+                                <button
+                                    style={{ marginRight: "8px" }}
+                                    onClick={() => handleOpenProfile(emp)}
+                                >
+                                    View
+                                </button>
+
                                 <button
                                     style={{
-                                        marginRight: "10px",
+                                        marginRight: "8px",
+                                        backgroundColor: "orange",
+                                        color: "white",
+                                    }}
+                                    onClick={() => handleOpenEdit(emp)}
+                                >
+                                    Edit
+                                </button>
+
+                                <button
+                                    style={{
                                         backgroundColor: "red",
                                         color: "white",
                                     }}
@@ -151,32 +233,56 @@ function EmployeeListPage() {
                 </tbody>
             </table>
 
-            {/* ADD EMPLOYEE MODAL */}
+            {/* existing ADD + EDIT modals (keep your versions) */}
+            {/* ... (your add/edit modals stay as before) ... */}
+
+            {/* 🔹 PROFILE MODAL – VIEW + UPLOAD PICTURE */}
             <Modal
-                isOpen={isModalOpen}
-                onRequestClose={() => setIsModalOpen(false)}
+                isOpen={isProfileModalOpen}
+                onRequestClose={() => setIsProfileModalOpen(false)}
                 style={{ content: { width: "400px", margin: "auto" } }}
             >
-                <h3>Add Employee</h3>
-                <form onSubmit={handleAddSubmit}>
-                    {Object.keys(newEmployee).map((field) => (
-                        <input
-                            key={field}
-                            placeholder={field}
-                            type={field === "salary" ? "number" : "text"}
-                            value={newEmployee[field]}
-                            onChange={(e) =>
-                                setNewEmployee({ ...newEmployee, [field]: e.target.value })
-                            }
-                            required
-                            style={{ display: "block", width: "100%", marginBottom: "10px" }}
-                        />
-                    ))}
-                    <button type="submit">Save</button>
-                </form>
+                {profileEmployee && (
+                    <>
+                        <h3>Employee Profile</h3>
+                        {/* show picture if exists */}
+                        {profileEmployee.profilePicture && (
+                            <img
+                                src={`http://localhost:3001${profileEmployee.profilePicture}`}
+                                alt="Profile"
+                                style={{
+                                    width: "150px",
+                                    height: "150px",
+                                    objectFit: "cover",
+                                    borderRadius: "50%",
+                                    marginBottom: "1rem",
+                                }}
+                            />
+                        )}
+                        <p><strong>Name:</strong> {profileEmployee.first_name} {profileEmployee.last_name}</p>
+                        <p><strong>Email:</strong> {profileEmployee.email}</p>
+                        <p><strong>Department:</strong> {profileEmployee.department}</p>
+                        <p><strong>Position:</strong> {profileEmployee.position}</p>
+                        <p><strong>Salary:</strong> {profileEmployee.salary}</p>
+
+                        <form onSubmit={handleProfileSubmit} style={{ marginTop: "1rem" }}>
+                            <label>Upload / Change Profile Picture</label>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => setProfileFile(e.target.files[0] || null)}
+                                style={{ display: "block", marginBottom: "1rem" }}
+                            />
+                            <button type="submit">Save Profile</button>
+                        </form>
+                    </>
+                )}
             </Modal>
         </div>
     );
 }
 
 export default EmployeeListPage;
+
+
+

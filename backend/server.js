@@ -6,6 +6,7 @@ const app = express();
 
 const cors = require('cors');
 
+const path = require('path');
 
 app.use(cors({
     origin: 'http://localhost:3000',
@@ -18,6 +19,8 @@ connectDB();
 
 // ✅ Middleware to parse JSON
 app.use(express.json());
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // ✅ Basic test route to confirm server is alive
 app.get('/', (req, res) => {

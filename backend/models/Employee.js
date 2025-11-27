@@ -9,7 +9,10 @@ const employeeSchema = new mongoose.Schema({
     date_of_joining: { type: Date},
     department: { type: String },
     created_at: { type: Date, default: Date.now },
-    updated_at: { type: Date, default: Date.now }
+    updated_at: { type: Date, default: Date.now },
+    profilePicture: {
+        type: String, // we will store the URL / path to the image
+    },
 });
 
 module.exports = mongoose.model('Employee', employeeSchema);

@@ -1,10 +1,6 @@
-//import express
 const express = require('express');
-
-//create new router object
 const router = express.Router();
 
-//import controller functions
 const {
     getAllEmployees,
     createEmployee,
@@ -13,11 +9,18 @@ const {
     deleteEmployee
 } = require('../controllers/employeeController');
 
-//requests
+// 👇 add this
+const upload = require('../config/upload');
+
+// requests
 router.get('/employees', getAllEmployees);
-router.post('/employees', createEmployee);
+
+// for create / update allow 1 file with field name 'profilePicture'
+router.post('/employees', upload.single('profilePicture'), createEmployee);
 router.get('/employees/:eid', getEmployeeById);
-router.put('/employees/:eid', updateEmployee);
-router.delete('/employees/:eid', deleteEmployee);
+router.put('/employees/:eid', upload.single('profilePicture'), updateEmployee);
+
+// delete still uses ?eid=
+router.delete('/employees', deleteEmployee);
 
 module.exports = router;
