@@ -2,9 +2,29 @@
 const Employee = require('../models/Employee');
 
 // GET all employees
+// GET all employees (with optional search by department / position)
 exports.getAllEmployees = async (req, res) => {
-    const employees = await Employee.find();
-    res.status(200).json(employees);
+    try {
+        const { department, position } = req.query;
+
+        const filter = {};
+
+        if (department) {
+            // case-insensitive match on department
+            filter.department = { $regex: department, $options: 'i' };
+        }
+
+        if (position) {
+            // case-insensitive match on position
+            filter.position = { $regex: position, $options: 'i' };
+        }
+
+        const employees = await Employee.find(filter);
+        res.status(200).json(employees);
+    } catch (error) {
+        console.error('getAllEmployees error:', error);
+        res.status(500).json({ message: 'Error fetching employees' });
+    }
 };
 
 // POST create employee

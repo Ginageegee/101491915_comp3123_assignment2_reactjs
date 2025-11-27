@@ -1,15 +1,19 @@
-import axiosClient from './axiosClient';
+// src/api/employeeApi.js
+import axiosClient from "./axiosClient";
 
 const employeeApi = {
-    getAll: (filters = {}) =>
-        axiosClient
-            .get('/emp/employees', { params: filters })
-            .then((res) => res.data),
+    getEmployees: (params) =>
+        axiosClient.get("/emp/employees", { params }).then((res) => res.data),
 
-    create: (payload) => axiosClient.post('/emp/employees', payload),
-    getById: (id) => axiosClient.get(`/emp/employees/${id}`).then(r => r.data),
-    update: (id, payload) => axiosClient.put(`/emp/employees/${id}`, payload),
-    remove: (id) => axiosClient.delete(`/emp/employees`, { params: { eid: id } }),
+    createEmployee: (data) =>
+        axiosClient.post("/emp/employees", data).then((res) => res.data),
+
+    // ✅ NEW: update employee
+    updateEmployee: (id, data) =>
+        axiosClient.put(`/emp/employees/${id}`, data).then((res) => res.data),
+
+    deleteEmployee: (id) =>
+        axiosClient.delete(`/emp/employees?eid=${id}`).then((res) => res.data),
 };
 
 export default employeeApi;
