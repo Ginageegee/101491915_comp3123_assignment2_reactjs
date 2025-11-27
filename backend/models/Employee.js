@@ -11,7 +11,7 @@ const employeeSchema = new mongoose.Schema({
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now },
     profilePicture: {
-        type: String, // we will store the URL / path to the image
+        type: String, // will store the URL path to the image
     },
 });
 

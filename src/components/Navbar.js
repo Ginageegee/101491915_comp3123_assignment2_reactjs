@@ -13,9 +13,6 @@ function Navbar() {
         <nav style={{ padding: '10px', borderBottom: '1px solid #ccc' }}>
             {token ? (
                 <>
-                    <Link to="/employees" style={{ marginRight: '10px' }}>
-                        Employees
-                    </Link>
                     <button onClick={handleLogout}>Logout</button>
                 </>
             ) : (

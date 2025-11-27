@@ -10,7 +10,7 @@ const employeeApi = {
     getEmployeeById: (id) =>
         axiosClient.get(`/emp/employees/${id}`).then((res) => res.data),
 
-    // allow data to be plain object OR FormData
+
     updateEmployee: (id, data) => {
         const config = {};
         if (data instanceof FormData) {

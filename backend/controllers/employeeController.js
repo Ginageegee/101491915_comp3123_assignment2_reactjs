@@ -1,9 +1,10 @@
 // Import Employee Model
 const Employee = require('../models/Employee');
 
-// GET all employees (already updated for search – keep that version)
+// GET all employees
 exports.getAllEmployees = async (req, res) => {
     try {
+        //search function
         const { department, position } = req.query;
         const filter = {};
         if (department) filter.department = { $regex: department, $options: 'i' };

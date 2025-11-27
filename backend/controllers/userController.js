@@ -11,7 +11,7 @@ const { validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 
 
-// ⭐ POST /api/v1/user/signup
+// POST /api/v1/user/signup
 exports.signup = async (req, res) => {
     try {
         // Validate request
@@ -51,7 +51,7 @@ exports.signup = async (req, res) => {
 
 
 
-// ⭐ POST /api/v1/user/login
+// POST /api/v1/user/login
 exports.login = async (req, res) => {
     try {
         // Validate request
@@ -74,7 +74,7 @@ exports.login = async (req, res) => {
             return res.status(401).json({ status: false, message: 'Invalid email or password' });
         }
 
-        // 🔥 Generate JWT Token
+        // Generate JWT Token
         const token = jwt.sign(
             { userId: user._id, username: user.username, email: user.email },
             process.env.JWT_SECRET || 'super-secret-key',
