@@ -189,99 +189,228 @@ function EmployeeListPage() {
         }`;
     };
 
-    if (isLoading) return <h2>Loading employees...</h2>;
+    if (isLoading) {
+        return (
+            <div
+                style={{
+                    minHeight: "60vh",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    fontSize: "1.2rem",
+                    color: "#555",
+                }}
+            >
+                Loading employees...
+            </div>
+        );
+    }
+
+    // Reusable small style helpers
+    const inputStyle = {
+        padding: "8px 10px",
+        borderRadius: "6px",
+        border: "1px solid #ccc",
+        flex: 1,
+        fontSize: "0.9rem",
+    };
+
+    const primaryButtonStyle = {
+        backgroundColor: "#646cff",
+        color: "#fff",
+        border: "none",
+        padding: "8px 14px",
+        borderRadius: "6px",
+        cursor: "pointer",
+        fontWeight: "bold",
+        fontSize: "0.9rem",
+    };
+
+    const dangerButtonStyle = {
+        backgroundColor: "#ff4d4d",
+        color: "#fff",
+        border: "none",
+        padding: "6px 12px",
+        borderRadius: "6px",
+        cursor: "pointer",
+        fontSize: "0.85rem",
+    };
+
+    const secondaryButtonStyle = {
+        backgroundColor: "#f1f1f5",
+        color: "#333",
+        border: "1px solid #ccc",
+        padding: "6px 12px",
+        borderRadius: "6px",
+        cursor: "pointer",
+        fontSize: "0.85rem",
+    };
 
     // ================== RENDER ==================
     return (
-        <div style={{ maxWidth: "900px", margin: "2rem auto" }}>
-            <h2>Employee List</h2>
+        <div
+            style={{
+                maxWidth: "1100px",
+                margin: "2rem auto",
+                padding: "1.5rem 2rem",
+                backgroundColor: "#f9fafb",
+                borderRadius: "12px",
+                boxShadow: "0 4px 14px rgba(0, 0, 0, 0.06)",
+            }}
+        >
+            <div
+                style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "1rem",
+                }}
+            >
+                <div>
+                    <h2 style={{ margin: 0 }}>Employee Management</h2>
+                    <p style={{ margin: "4px 0 0", color: "#666", fontSize: "0.9rem" }}>
+                        View, add, edit, delete employees and manage profiles.
+                    </p>
+                </div>
+
+                {/* ADD EMPLOYEE BUTTON */}
+                <button
+                    onClick={() => setIsAddModalOpen(true)}
+                    style={primaryButtonStyle}
+                    onMouseOver={(e) => (e.target.style.opacity = "0.85")}
+                    onMouseOut={(e) => (e.target.style.opacity = "1")}
+                >
+                    + Add Employee
+                </button>
+            </div>
 
             {/* SEARCH FILTER */}
-            <div style={{ display: "flex", gap: "10px", marginBottom: "1rem" }}>
+            <div
+                style={{
+                    display: "flex",
+                    gap: "10px",
+                    marginBottom: "1rem",
+                    padding: "10px 12px",
+                    backgroundColor: "#fff",
+                    borderRadius: "10px",
+                    border: "1px solid #e2e2e8",
+                }}
+            >
                 <input
                     placeholder="Filter by department"
                     value={department}
                     onChange={(e) => setDepartment(e.target.value)}
+                    style={inputStyle}
                 />
                 <input
                     placeholder="Filter by position"
                     value={position}
                     onChange={(e) => setPosition(e.target.value)}
+                    style={inputStyle}
                 />
-                <button onClick={handleSearch}>Search</button>
+                <button
+                    onClick={handleSearch}
+                    style={primaryButtonStyle}
+                    onMouseOver={(e) => (e.target.style.opacity = "0.85")}
+                    onMouseOut={(e) => (e.target.style.opacity = "1")}
+                >
+                    Search
+                </button>
             </div>
 
-            {/* ADD EMPLOYEE BUTTON */}
-            <button onClick={() => setIsAddModalOpen(true)}>+ Add Employee</button>
-
             {/* EMPLOYEE TABLE */}
-            <table
+            <div
                 style={{
-                    width: "100%",
-                    borderCollapse: "collapse",
-                    marginTop: "1rem",
+                    backgroundColor: "#fff",
+                    borderRadius: "10px",
+                    border: "1px solid #e2e2e8",
+                    overflow: "hidden",
                 }}
             >
-                <thead>
-                <tr style={{ backgroundColor: "#e0e0e0" }}>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Email</th>
-                    <th>Department</th>
-                    <th>Position</th>
-                    <th>Salary</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                {employees.length > 0 ? (
-                    employees.map((emp) => (
-                        <tr key={emp._id} style={{ borderBottom: "1px solid #ccc" }}>
-                            <td>{emp.first_name}</td>
-                            <td>{emp.last_name}</td>
-                            <td>{emp.email}</td>
-                            <td>{emp.department}</td>
-                            <td>{emp.position}</td>
-                            <td>{emp.salary}</td>
-                            <td>
-                                <button
-                                    style={{ marginRight: "6px" }}
-                                    onClick={() => handleOpenView(emp)}
-                                >
-                                    View
-                                </button>
-                                <button
-                                    style={{ marginRight: "6px" }}
-                                    onClick={() => handleOpenEdit(emp)}
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    style={{ backgroundColor: "red", color: "white" }}
-                                    onClick={() => deleteEmployeeMutation.mutate(emp._id)}
-                                >
-                                    Delete
-                                </button>
+                <table
+                    style={{
+                        width: "100%",
+                        borderCollapse: "collapse",
+                    }}
+                >
+                    <thead>
+                    <tr style={{ backgroundColor: "#f3f4ff" }}>
+                        <th style={{ padding: "10px", textAlign: "left", fontSize: "0.85rem" }}>First Name</th>
+                        <th style={{ padding: "10px", textAlign: "left", fontSize: "0.85rem" }}>Last Name</th>
+                        <th style={{ padding: "10px", textAlign: "left", fontSize: "0.85rem" }}>Email</th>
+                        <th style={{ padding: "10px", textAlign: "left", fontSize: "0.85rem" }}>Department</th>
+                        <th style={{ padding: "10px", textAlign: "left", fontSize: "0.85rem" }}>Position</th>
+                        <th style={{ padding: "10px", textAlign: "left", fontSize: "0.85rem" }}>Salary</th>
+                        <th style={{ padding: "10px", textAlign: "left", fontSize: "0.85rem" }}>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {employees.length > 0 ? (
+                        employees.map((emp, index) => (
+                            <tr
+                                key={emp._id}
+                                style={{
+                                    borderBottom: "1px solid #eee",
+                                    backgroundColor: index % 2 === 0 ? "#fff" : "#fafbff",
+                                }}
+                            >
+                                <td style={{ padding: "10px", fontSize: "0.9rem" }}>{emp.first_name}</td>
+                                <td style={{ padding: "10px", fontSize: "0.9rem" }}>{emp.last_name}</td>
+                                <td style={{ padding: "10px", fontSize: "0.9rem" }}>{emp.email}</td>
+                                <td style={{ padding: "10px", fontSize: "0.9rem" }}>{emp.department}</td>
+                                <td style={{ padding: "10px", fontSize: "0.9rem" }}>{emp.position}</td>
+                                <td style={{ padding: "10px", fontSize: "0.9rem" }}>{emp.salary}</td>
+                                <td style={{ padding: "10px", fontSize: "0.9rem" }}>
+                                    <button
+                                        style={{ ...secondaryButtonStyle, marginRight: "6px" }}
+                                        onClick={() => handleOpenView(emp)}
+                                    >
+                                        View
+                                    </button>
+                                    <button
+                                        style={{ ...secondaryButtonStyle, marginRight: "6px" }}
+                                        onClick={() => handleOpenEdit(emp)}
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
+                                        style={dangerButtonStyle}
+                                        onClick={() => deleteEmployeeMutation.mutate(emp._id)}
+                                    >
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="7" style={{ textAlign: "center", padding: "20px", fontSize: "0.9rem" }}>
+                                No employees found.
                             </td>
                         </tr>
-                    ))
-                ) : (
-                    <tr>
-                        <td colSpan="7" style={{ textAlign: "center" }}>
-                            No employees found.
-                        </td>
-                    </tr>
-                )}
-                </tbody>
-            </table>
+                    )}
+                    </tbody>
+                </table>
+            </div>
 
             {/* ADD EMPLOYEE MODAL */}
             <Modal
                 isOpen={isAddModalOpen}
                 onRequestClose={() => setIsAddModalOpen(false)}
-                style={{ content: { width: "400px", margin: "auto" } }}
+                style={{
+                    content: {
+                        width: "420px",
+                        maxWidth: "90%",
+                        margin: "auto",
+                        borderRadius: "12px",
+                        padding: "20px 24px",
+                    },
+                    overlay: {
+                        backgroundColor: "rgba(0,0,0,0.4)",
+                    },
+                }}
             >
-                <h3>Add Employee</h3>
+                <h3 style={{ marginTop: 0, marginBottom: "10px" }}>Add Employee</h3>
                 <form onSubmit={handleAddSubmit}>
                     <input
                         placeholder="First Name"
@@ -290,7 +419,7 @@ function EmployeeListPage() {
                             setNewEmployee({ ...newEmployee, first_name: e.target.value })
                         }
                         required
-                        style={{ display: "block", width: "100%", marginBottom: "10px" }}
+                        style={{ ...inputStyle, width: "100%", marginBottom: "10px" }}
                     />
                     <input
                         placeholder="Last Name"
@@ -299,7 +428,7 @@ function EmployeeListPage() {
                             setNewEmployee({ ...newEmployee, last_name: e.target.value })
                         }
                         required
-                        style={{ display: "block", width: "100%", marginBottom: "10px" }}
+                        style={{ ...inputStyle, width: "100%", marginBottom: "10px" }}
                     />
                     <input
                         placeholder="Email"
@@ -309,7 +438,7 @@ function EmployeeListPage() {
                             setNewEmployee({ ...newEmployee, email: e.target.value })
                         }
                         required
-                        style={{ display: "block", width: "100%", marginBottom: "10px" }}
+                        style={{ ...inputStyle, width: "100%", marginBottom: "10px" }}
                     />
                     <input
                         placeholder="Department"
@@ -317,7 +446,7 @@ function EmployeeListPage() {
                         onChange={(e) =>
                             setNewEmployee({ ...newEmployee, department: e.target.value })
                         }
-                        style={{ display: "block", width: "100%", marginBottom: "10px" }}
+                        style={{ ...inputStyle, width: "100%", marginBottom: "10px" }}
                     />
                     <input
                         placeholder="Position"
@@ -325,7 +454,7 @@ function EmployeeListPage() {
                         onChange={(e) =>
                             setNewEmployee({ ...newEmployee, position: e.target.value })
                         }
-                        style={{ display: "block", width: "100%", marginBottom: "10px" }}
+                        style={{ ...inputStyle, width: "100%", marginBottom: "10px" }}
                     />
                     <input
                         placeholder="Salary"
@@ -334,12 +463,14 @@ function EmployeeListPage() {
                         onChange={(e) =>
                             setNewEmployee({ ...newEmployee, salary: e.target.value })
                         }
-                        style={{ display: "block", width: "100%", marginBottom: "10px" }}
+                        style={{ ...inputStyle, width: "100%", marginBottom: "10px" }}
                     />
 
-                    {/* 👇 File input for profile picture */}
-                    <div style={{ marginBottom: "10px" }}>
-                        <label>Profile Picture</label>
+                    {/* File input for profile picture */}
+                    <div style={{ marginBottom: "12px", fontSize: "0.9rem" }}>
+                        <label style={{ display: "block", marginBottom: "4px" }}>
+                            Profile Picture
+                        </label>
                         <input
                             type="file"
                             accept="image/*"
@@ -347,7 +478,21 @@ function EmployeeListPage() {
                         />
                     </div>
 
-                    <button type="submit">Save</button>
+                    <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}>
+                        <button
+                            type="button"
+                            style={secondaryButtonStyle}
+                            onClick={() => setIsAddModalOpen(false)}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            style={primaryButtonStyle}
+                        >
+                            Save
+                        </button>
+                    </div>
                 </form>
             </Modal>
 
@@ -355,9 +500,20 @@ function EmployeeListPage() {
             <Modal
                 isOpen={isEditModalOpen}
                 onRequestClose={() => setIsEditModalOpen(false)}
-                style={{ content: { width: "400px", margin: "auto" } }}
+                style={{
+                    content: {
+                        width: "420px",
+                        maxWidth: "90%",
+                        margin: "auto",
+                        borderRadius: "12px",
+                        padding: "20px 24px",
+                    },
+                    overlay: {
+                        backgroundColor: "rgba(0,0,0,0.4)",
+                    },
+                }}
             >
-                <h3>Edit Employee</h3>
+                <h3 style={{ marginTop: 0, marginBottom: "10px" }}>Edit Employee</h3>
 
                 {/* Show current picture if exists */}
                 {editEmployee.profilePicture && (
@@ -376,14 +532,14 @@ function EmployeeListPage() {
                         value={editEmployee.first_name}
                         onChange={(e) => handleEditChange("first_name", e.target.value)}
                         required
-                        style={{ display: "block", width: "100%", marginBottom: "10px" }}
+                        style={{ ...inputStyle, width: "100%", marginBottom: "10px" }}
                     />
                     <input
                         placeholder="Last Name"
                         value={editEmployee.last_name}
                         onChange={(e) => handleEditChange("last_name", e.target.value)}
                         required
-                        style={{ display: "block", width: "100%", marginBottom: "10px" }}
+                        style={{ ...inputStyle, width: "100%", marginBottom: "10px" }}
                     />
                     <input
                         placeholder="Email"
@@ -391,31 +547,33 @@ function EmployeeListPage() {
                         value={editEmployee.email}
                         onChange={(e) => handleEditChange("email", e.target.value)}
                         required
-                        style={{ display: "block", width: "100%", marginBottom: "10px" }}
+                        style={{ ...inputStyle, width: "100%", marginBottom: "10px" }}
                     />
                     <input
                         placeholder="Department"
                         value={editEmployee.department}
                         onChange={(e) => handleEditChange("department", e.target.value)}
-                        style={{ display: "block", width: "100%", marginBottom: "10px" }}
+                        style={{ ...inputStyle, width: "100%", marginBottom: "10px" }}
                     />
                     <input
                         placeholder="Position"
                         value={editEmployee.position}
                         onChange={(e) => handleEditChange("position", e.target.value)}
-                        style={{ display: "block", width: "100%", marginBottom: "10px" }}
+                        style={{ ...inputStyle, width: "100%", marginBottom: "10px" }}
                     />
                     <input
                         placeholder="Salary"
                         type="number"
                         value={editEmployee.salary}
                         onChange={(e) => handleEditChange("salary", e.target.value)}
-                        style={{ display: "block", width: "100%", marginBottom: "10px" }}
+                        style={{ ...inputStyle, width: "100%", marginBottom: "10px" }}
                     />
 
                     {/* New picture upload */}
-                    <div style={{ marginBottom: "10px" }}>
-                        <label>Change Profile Picture</label>
+                    <div style={{ marginBottom: "12px", fontSize: "0.9rem" }}>
+                        <label style={{ display: "block", marginBottom: "4px" }}>
+                            Change Profile Picture
+                        </label>
                         <input
                             type="file"
                             accept="image/*"
@@ -425,7 +583,21 @@ function EmployeeListPage() {
                         />
                     </div>
 
-                    <button type="submit">Save Changes</button>
+                    <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}>
+                        <button
+                            type="button"
+                            style={secondaryButtonStyle}
+                            onClick={() => setIsEditModalOpen(false)}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            style={primaryButtonStyle}
+                        >
+                            Save Changes
+                        </button>
+                    </div>
                 </form>
             </Modal>
 
@@ -433,9 +605,20 @@ function EmployeeListPage() {
             <Modal
                 isOpen={isViewModalOpen}
                 onRequestClose={() => setIsViewModalOpen(false)}
-                style={{ content: { width: "400px", margin: "auto" } }}
+                style={{
+                    content: {
+                        width: "420px",
+                        maxWidth: "90%",
+                        margin: "auto",
+                        borderRadius: "12px",
+                        padding: "20px 24px",
+                    },
+                    overlay: {
+                        backgroundColor: "rgba(0,0,0,0.4)",
+                    },
+                }}
             >
-                <h3>Employee Details</h3>
+                <h3 style={{ marginTop: 0, marginBottom: "10px" }}>Employee Details</h3>
                 {viewEmployee && (
                     <div>
                         {getProfilePicUrl(viewEmployee) && (
@@ -455,10 +638,18 @@ function EmployeeListPage() {
                         <p><strong>Salary:</strong> {viewEmployee.salary}</p>
                     </div>
                 )}
-                <button onClick={() => setIsViewModalOpen(false)}>Close</button>
+                <div style={{ textAlign: "right", marginTop: "12px" }}>
+                    <button
+                        style={secondaryButtonStyle}
+                        onClick={() => setIsViewModalOpen(false)}
+                    >
+                        Close
+                    </button>
+                </div>
             </Modal>
         </div>
     );
 }
 
 export default EmployeeListPage;
+
